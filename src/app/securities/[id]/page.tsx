@@ -1,13 +1,21 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function EditSecurityPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params.id;
 
-  const [form, setForm] = useState({ securityKey: '', name: '', type: 'stock', currency: 'USD', isActive: true });
+  const [form, setForm] = useState({
+    securityKey: '',
+    name: '',
+    type: 'stock',
+    currency: 'USD',
+    isActive: true,
+  });
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
@@ -29,7 +37,10 @@ export default function EditSecurityPage() {
 
   async function save() {
     setErr(null);
-    const res = await fetch(`/api/securities/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+    const res = await fetch(`/api/securities/${id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
     if (!res.ok) { setErr('Save failed'); return; }
     router.push('/securities');
   }
@@ -48,18 +59,24 @@ export default function EditSecurityPage() {
       <h1>Edit Security</h1>
       {err && <p style={{ color: 'red' }}>{err}</p>}
       <div style={{ display: 'grid', gap: 10 }}>
-        <input placeholder="Security Key" value={form.securityKey} onChange={e => setForm({ ...form, securityKey: e.target.value })} />
-        <input placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-        <input placeholder="Type" value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
-        <input placeholder="Currency" value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
-        <label><input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} /> Active</label>
+        <input placeholder="Security Key" value={form.securityKey}
+          onChange={e => setForm({ ...form, securityKey: e.target.value })} />
+        <input placeholder="Name" value={form.name}
+          onChange={e => setForm({ ...form, name: e.target.value })} />
+        <input placeholder="Type" value={form.type}
+          onChange={e => setForm({ ...form, type: e.target.value })} />
+        <input placeholder="Currency" value={form.currency}
+          onChange={e => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
+        <label>
+          <input type="checkbox" checked={form.isActive}
+            onChange={e => setForm({ ...form, isActive: e.target.checked })} /> Active
+        </label>
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={save}>Save</button>
           <button onClick={remove} style={{ color: 'red' }}>Delete</button>
-          <a href="/securities">Cancel</a>
+          <Link href="/securities">Cancel</Link>
         </div>
       </div>
     </main>
   );
 }
-
